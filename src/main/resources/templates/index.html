@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Auth Demo</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .btn { background: #0088cc; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #0077b3; }
+        .user-info { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<h1>Telegram Auth Test</h1>
+
+<div th:if="${user}">
+    <div class="user-info">
+        <h3>You are already logged in!</h3>
+        <p>Welcome, <span th:text="${user.firstName}"></span></p>
+        <a href="/profile" class="btn">Profile</a>
+        <a href="/logout" class="btn">Logout</a>
+    </div>
+</div>
+
+<div th:unless="${user}">
+    <p>To log in, please click the button below and authorize via Telegram.</p>
+    <button class="btn" onclick="loginWithTelegram()">Login with Telegram</button>
+
+    <script>
+        function loginWithTelegram() {
+            const tg = window.Telegram.WebApp;
+
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+
+                const formData = new FormData();
+                formData.append('id', user.id);
+                formData.append('first_name', user.first_name);
+                if (user.last_name) formData.append('last_name', user.last_name);
+                if (user.username) formData.append('username', user.username);
+                if (user.photo_url) formData.append('photo_url', user.photo_url);
+                formData.append('auth_date', tg.initDataUnsafe.auth_date);
+                formData.append('hash', tg.initData);
+
+                fetch('/auth/telegram', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                }).then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert('Please open this app from Telegram bot');
+            }
+        }
+    </script>
+</div>
+</body>
+</html>
