@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .profile-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 20px; }
+        .profile-photo { max-width: 150px; border-radius: 50%; }
+        .btn { background: #0088cc; color: white; border: none; padding: 8px 12px; border-radius: 5px; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #0077b3; }
+    </style>
+</head>
+<body>
+<h1>Your Profile</h1>
+
+<div class="profile-card">
+    <div th:if="${user.photoUrl}">
+        <img th:src="${user.photoUrl}" alt="Profile Photo" class="profile-photo">
+    </div>
+
+    <h2 th:text="${user.firstName + ' ' + (user.lastName != null ? user.lastName : '')}"></h2>
+
+    <table>
+        <tr>
+            <th>Telegram ID:</th>
+            <td th:text="${user.id}"></td>
+        </tr>
+        <tr th:if="${user.username}">
+            <th>Username:</th>
+            <td th:text="'@' + ${user.username}"></td>
+        </tr>
+        <tr>
+            <th>Auth Date:</th>
+            <td th:text="${#temporals.format(#temporals.createInstant(user.authDate * 1000), 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 20px;">
+        <a href="/" class="btn">Home</a>
+        <a href="/logout" class="btn">Logout</a>
+    </div>
+</div>
+</body>
+</html>

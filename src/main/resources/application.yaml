@@ -1,0 +1,12 @@
+server:
+  port: 8080
+  address: 127.0.0.1
+
+telegram:
+  bot:
+    name: my_test_auth_bot
+    token: 7501391976:AAEmjhSTalVEYKJvfDuAQSZM_F8ym5CyWRk
+
+spring:
+  application:
+    name: telegram-auth
